@@ -1,0 +1,3 @@
+database: sqlite:////tmp/kohlrabi.sqlite
+debug: true
+module: kohlrabi.modules.example

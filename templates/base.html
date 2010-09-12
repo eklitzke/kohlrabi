@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel="shortcut icon" href="{{static_url('favicon.ico')}}">
+    {% block style %}<link rel="stylesheet" type="text/css" href="{{static_url('css/main.css')}}">{% end %}
+    {% block js %}{% end %}
+  </head>
+  <body>
+    <div id="bd">
+      {% block body %}
+      {% end %}
+    </div> <!-- bd -->
+  </body>
+</html>

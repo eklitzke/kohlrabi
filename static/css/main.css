@@ -1,0 +1,13 @@
+@import url(http://yui.yahooapis.com/3.2.0/build/cssreset/reset-min.css);
+@import url(http://fonts.googleapis.com/css?family=Droid+Sans);
+
+html { font-family: 'Droid Sans', sans-serif; }
+body { margin: 1em; max-width: 800px; }
+/* .title { font-size: 60px; position: absolute; bottom: 20px; right: 2em; color: #444; } */
+.title { font-size: 60px; position: absolute; bottom: 20px; right: 2em; color: #444; }
+.title_image { margin-left: 1em; }
+.rel { position: relative; }
+
+.reports { margin: 1em; }
+.reports > a { color: #444; text-decoration: none; }
+.reports > a:hover { color: black; text-decoration: none; }

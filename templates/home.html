@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="rel">
+  <img src="{{static_url('images/purple.png')}}" class="title_image" >
+  <span class="title">Kohlrabi</span>
+</div>
+<div class="reports">
+  {% for report in reports %}
+  <a href="/report/{{report['table_name']}}/{{report['date']}}"> {{ report['date'] }} {{ escape(report['name']) }} </a>
+  <br>
+  {% end %}
+</div>
+{% end %}

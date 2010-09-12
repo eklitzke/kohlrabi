@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{static_url('css/report.css')}}">
+{% end %}
+
+{% block js %}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="{{static_url('js/report.js')}}"></script>
+{% end %}
+
+
+{% block body %}
+<table id="kohlrabi_table">
+  <tr>
+    {% for c in columns %}
+    <th class="{{c.css_class}}">{{escape(c.display)}}</th>
+    {% end %}
+  </tr>
+  {% for datum in data %}
+  <tr>
+    {% for c in columns %}
+    <td class="{{c.css_class}}">{{ c.format(getattr(datum, c.name)) }}</td>
+    {% end %}
+  </tr>
+  {% end %}
+</table>
+{% end %}
