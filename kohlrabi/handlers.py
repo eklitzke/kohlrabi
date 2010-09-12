@@ -48,9 +48,9 @@ class Home(RequestHandler):
                 date_map[d].append(tbl)
 
         self.env['reports'] = []
-        for k, v in date_map.iteritems():
+        for k in sorted(date_map.keys(), reverse=True):
             date = k.strftime('%Y-%m-%d')
-            for table in sorted(v, key=lambda x: x.display_name):
+            for table in sorted(date_map[k], key=lambda x: x.display_name):
                 item = {'date': date, 'name': table.display_name, 'table_name': table.__name__}
                 self.env['reports'].append(item)
         
@@ -63,13 +63,13 @@ class Uploader(RequestHandler):
     path = '/upload'
 
     def post(self):
-        table = self.request.get_argument('table')
-        data = self.request.get_argument('data')
-        if data.startswith('{'):
+        table = self.get_argument('table')
+        data = str(self.get_argument('data'))
+        if data[0] in '{[':
             data = json.loads(data)
         else:
             data = pickle.loads(data)
-        date = self.parse_date(self.request.get_argument('date', None))
+        date = self.parse_date(self.get_argument('date', None))
         getattr(db, table).load_report(data, date)
         self.set_status(204)
 
