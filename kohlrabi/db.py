@@ -8,10 +8,9 @@ report_tables = set()
 metadata = MetaData()
 session = None
 
-def bind(engine_path, import_module):
+def bind(engine_path, import_module, create_tables=False):
     global session
     engine = create_engine(engine_path)
-    metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
     session = Session()
 
@@ -20,6 +19,9 @@ def bind(engine_path, import_module):
         for v in report_tables:
             if v.__name__ not in globals().keys():
                 globals()[v.__name__] = v
+
+    if create_tables:
+        metadata.create_all(engine)
 
 Base = declarative_base(metadata=metadata)
 
