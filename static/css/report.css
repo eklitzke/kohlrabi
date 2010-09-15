@@ -10,3 +10,6 @@ tr:hover { background: #e6c6ff; }
 .number { text-align: right; }
 .clicked { background: #bbffce !important; }
 td.tiny { font-size: 80%; }
+
+label { font-weight: bold; }
+.input-comment { color: #666; font-size: 90%; }

@@ -11,6 +11,10 @@
 
 
 {% block body %}
+<label for="servlet_filter">Servlet Filter: </label><input type="text" id="servlet_filter"/>
+<span class="input-comment">
+  (e.g. "main:biz_details"; may be slow)
+</span>
 <table id="kohlrabi_table">
   <tr>
     {% for c in columns %}
@@ -20,9 +24,13 @@
   {% for datum in data %}
   <tr>
     {% for c in columns %}
-    <td class="{{c.css_class}}">{{ c.format(getattr(datum, c.name)) }}</td>
+    <td class="{{c.css_class}}" title="{{escape(c.display)}}">{{ c.format(getattr(datum, c.name)) }}</td>
     {% end %}
   </tr>
   {% end %}
 </table>
+
+<script type="text/javascript">
+  establishInputFilter($('#servlet_filter'), 0);
+</script>
 {% end %}

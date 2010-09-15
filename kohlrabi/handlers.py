@@ -50,9 +50,8 @@ class Home(RequestHandler):
         self.env['reports'] = []
         for k in sorted(date_map.keys(), reverse=True):
             date = k.strftime('%Y-%m-%d')
-            for table in sorted(date_map[k], key=lambda x: x.display_name):
-                item = {'date': date, 'name': table.display_name, 'table_name': table.__name__}
-                self.env['reports'].append(item)
+            tables = sorted(date_map[k], key=lambda x: x.display_name)
+            self.env['reports'].append((date, [{'name': table.display_name, 'table_name': table.__name__} for table in tables]))
         
         self.env['title'] = 'kohlrabi: home'
         self.render('home.html')

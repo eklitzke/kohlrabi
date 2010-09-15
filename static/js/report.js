@@ -1,3 +1,5 @@
+/* -*- indent-tabs-mode: nil; tab-width: 4; -*- */
+
 $(document).ready(function () {
     var tbl = document.getElementById('kohlrabi_table');
     var thRow = tbl.getElementsByTagName('tr')[0];
@@ -71,5 +73,32 @@ $(document).ready(function () {
             clickedRow = null;
         }
     });
-
 });
+
+function establishInputFilter(input, offset) {
+    var tbl = document.getElementById('kohlrabi_table');
+    console.info(tbl);
+    var lastVal = input.val();
+    var filter = function () {
+        var newVal = $(this).val();
+        if (newVal !== lastVal) {
+            lastVal = newVal;
+            var r = new RegExp('^' + newVal);
+            $('tr').each(function () {
+                var td = this.children[offset];
+                if (td.tagName == 'TD') {
+                    if (r.test(td.innerHTML)) {
+                        this.style.display = 'table-row';
+                    } else {
+                        this.style.display = 'none';
+                    }
+                } else {
+                    console.info('lol');
+                    console.info(this);
+                }
+            });
+        }
+    };
+    input.change(filter);
+    input.keyup(filter);
+}

@@ -11,3 +11,6 @@ body { margin: 1em; max-width: 800px; }
 .reports { margin: 1em; }
 .reports > a { color: #444; text-decoration: none; }
 .reports > a:hover { color: black; text-decoration: none; }
+
+.bold { font-weight: bold; }
+td { padding-right: 0.5em; }

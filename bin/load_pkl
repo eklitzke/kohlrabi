@@ -18,6 +18,6 @@ if __name__ == '__main__':
     if not opts.date:
         opts.date = datetime.date.today()
     
-    kohlrabi.db.bind('sqlite:////tmp/kohlrabi.sqlite')
+    kohlrabi.db.bind('sqlite:////tmp/kohlrabi.sqlite', 'kohlrabi.modules.example', True)
     cls = getattr(kohlrabi.db, opts.class_)
     cls.load_report(pickle.load(open(args[0])))

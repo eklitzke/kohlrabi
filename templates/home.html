@@ -5,10 +5,18 @@
   <img src="{{static_url('images/purple.png')}}" class="title_image" >
   <span class="title">Kohlrabi</span>
 </div>
-<div class="reports">
-  {% for report in reports %}
-  <a href="/report/{{report['table_name']}}/{{report['date']}}"> {{ report['date'] }} {{ escape(report['name']) }} </a>
-  <br>
+<table class="reports">
+  {% for date, tables in reports %}
+  <tr>
+	<td class="bold">{{ date }}</td>
+	<td><a href="/report/{{tables[0]['table_name']}}/{{date}}">{{ tables[0]['name'] }}</a></td>
+  </tr>
+  {% for table in tables[1:] %}
+  <tr>
+	<td></td>
+	<td><a href="/report/{{table['table_name']}}/{{date}}"></td>
+  </tr>
   {% end %}
-</div>
+  {% end %}
+</table>
 {% end %}
