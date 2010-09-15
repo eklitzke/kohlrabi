@@ -76,8 +76,6 @@ $(document).ready(function () {
 });
 
 function establishInputFilter(input, offset) {
-    var tbl = document.getElementById('kohlrabi_table');
-    console.info(tbl);
     var lastVal = input.val();
     var filter = function () {
         var newVal = $(this).val();
@@ -92,9 +90,6 @@ function establishInputFilter(input, offset) {
                     } else {
                         this.style.display = 'none';
                     }
-                } else {
-                    console.info('lol');
-                    console.info(this);
                 }
             });
         }
