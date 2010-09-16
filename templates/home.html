@@ -14,7 +14,7 @@
   {% for table in tables[1:] %}
   <tr>
 	<td></td>
-	<td><a href="/report/{{table['table_name']}}/{{date}}"></td>
+	<td><a href="/report/{{table['table_name']}}/{{date}}">{{ table['name'] }}</a></td>
   </tr>
   {% end %}
   {% end %}

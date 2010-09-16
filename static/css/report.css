@@ -13,3 +13,5 @@ td.tiny { font-size: 80%; }
 
 label { font-weight: bold; }
 .input-comment { color: #666; font-size: 90%; }
+
+.vgap { margin-bottom: 0.5em; }

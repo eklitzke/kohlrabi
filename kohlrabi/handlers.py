@@ -1,6 +1,5 @@
 from collections import defaultdict
 import datetime
-import cPickle as pickle
 try:
     import simplejson as json
 except ImportError:
@@ -64,10 +63,7 @@ class Uploader(RequestHandler):
     def post(self):
         table = self.get_argument('table')
         data = str(self.get_argument('data'))
-        if data[0] in '{[':
-            data = json.loads(data)
-        else:
-            data = pickle.loads(data)
+        data = json.loads(data)
         date = self.parse_date(self.get_argument('date', None))
         getattr(db, table).load_report(data, date)
         self.set_status(204)

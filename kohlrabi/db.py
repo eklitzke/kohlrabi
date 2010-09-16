@@ -43,15 +43,15 @@ class ReportMeta(DeclarativeMeta):
         for r in cls.html_table:
             coltype = type(cls.__table__._columns[r.name].type)
             if coltype is Float:
-                r.format = format_float
+                r.format = format_float if not r.format else r.format
                 if not r.css_class:
                     r.css_class = 'number'
             elif coltype is Integer:
-                r.format = format_int
+                r.format = format_int if not r.format else r.format
                 if not r.css_class:
                     r.css_class = 'number'
             else:
-                r.format = format_str
+                r.format = format_str if not r.format else r.format
 
     def load_report(cls, data, date=None):
         date = date or datetime.date.today()
@@ -69,7 +69,14 @@ class ReportMeta(DeclarativeMeta):
 
 class ReportColumn(object):
 
-    def __init__(self, display, name, css_class=''):
+    def __init__(self, display, name, css_class='', format=None):
         self.display = display
         self.name = name
         self.css_class = css_class
+        self.format = format
+
+def format_percentage(val):
+    return '%1.2f%%' % (val * 100.0,)
+
+def format_kb(val):
+    return '%1.2f' % (val / 1024.0,)
