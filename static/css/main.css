@@ -2,7 +2,7 @@
 @import url(http://fonts.googleapis.com/css?family=Droid+Sans);
 
 html { font-family: 'Droid Sans', sans-serif; }
-body { margin: 1em; max-width: 800px; }
+body { margin: 1em; max-width: 600px; }
 /* .title { font-size: 60px; position: absolute; bottom: 20px; right: 2em; color: #444; } */
 .title { font-size: 60px; position: absolute; bottom: 20px; right: 2em; color: #444; }
 .title_image { margin-left: 1em; }
@@ -14,3 +14,6 @@ body { margin: 1em; max-width: 800px; }
 
 .bold { font-weight: bold; }
 td { padding-right: 0.5em; }
+
+a { color: #222; text-decoration: none; }
+a:hover { color: black; }

@@ -32,7 +32,7 @@ class ReportMeta(DeclarativeMeta):
         report_tables.add(cls)
 
         def format_float(v):
-            return '%1.3f' % (v or 0)
+            return '%1.2f' % (v or 0)
 
         def format_int(v):
             return '%d' % (v or 0)

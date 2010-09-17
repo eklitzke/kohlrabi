@@ -81,3 +81,35 @@ class MemcacheReport(Base):
     @classmethod
     def report_data(cls, date):
         return session.query(cls).filter(cls.date == date).order_by(cls.servlet).order_by(desc(cls.frequency)).order_by(desc(cls.hits))
+
+class ServletBreakdownReport(Base):
+
+    __tablename__ = 'servlet_breakdown_report'
+    __metaclass__ = ReportMeta
+
+    id = Column(Integer, primary_key=True)
+    date = Column(Date, nullable=False)
+    servlet = Column(String, nullable=False)
+    servlet_count = Column(Integer, nullable=False)
+    logged_in = Column(Boolean, nullable=False)
+    db_mean = Column(Float, default=0, nullable=False)
+    memcache_mean = Column(Float, default=0, nullable=False)
+    template_mean = Column(Float, default=0, nullable=False)
+    other_mean = Column(Float, default=0, nullable=False)
+    total_mean = Column(Float, default=0, nullable=False)
+
+    display_name = 'Servlet Timing Breakdown'
+    html_table = [
+        ReportColumn('Servlet', 'servlet'),
+        ReportColumn('Count', 'servlet_count'),
+        ReportColumn('Logged In?', 'logged_in'),
+        ReportColumn('DB Mean', 'db_mean'),
+        ReportColumn('Memcache Mean', 'memcache_mean'),
+        ReportColumn('Template Mean', 'template_mean'),
+        ReportColumn('Other Mean', 'other_mean'),
+        ReportColumn('Total Mean', 'total_mean'),
+        ]
+
+    @classmethod
+    def report_data(cls, date):
+        return session.query(cls).filter(cls.date == date).order_by(cls.servlet).order_by(cls.logged_in)

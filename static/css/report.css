@@ -15,3 +15,6 @@ label { font-weight: bold; }
 .input-comment { color: #666; font-size: 90%; }
 
 .vgap { margin-bottom: 0.5em; }
+
+a { color: #222; text-decoration: none; }
+a:hover { color: black; }
