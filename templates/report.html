@@ -23,7 +23,7 @@
     {% end %}
   </tr>
   {% for datum in data %}
-  <tr>
+  <tr class="hoverable">
     {% for c in columns %}
     <td class="{{c.css_class}}" title="{{escape(c.display)}}">{{ c.format(getattr(datum, c.name)) }}</td>
     {% end %}

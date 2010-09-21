@@ -5,10 +5,12 @@ html { font-family: 'Droid Sans', sans-serif; }
 body { margin: 1em; }
 th { padding-right: 1em; font-weight: bold; min-width: 6em; text-align: left; }
 td { padding-right: 1em; text-align: left; max-width: 60em; word-wrap: break-word; }
-tr:hover { background: #e6c6ff; }
+
+.hoverable:hover { background: #c6daf4; }
+
 .align-right { text-align: right; }
 .number { text-align: right; }
-.clicked { background: #bbffce !important; }
+.clicked { background: #d1c5ff !important; }
 td.tiny { font-size: 80%; }
 
 label { font-weight: bold; }
