@@ -75,13 +75,18 @@ $(document).ready(function () {
     });
 });
 
-function establishInputFilter(input, offset) {
+function establishInputFilter(input, offset, implicitCaret) {
     var lastVal = input.val();
     var filter = function () {
         var newVal = $(this).val();
         if (newVal !== lastVal) {
             lastVal = newVal;
-            var r = new RegExp('^' + newVal);
+            var r;
+            if (implicitCaret) {
+                r = new RegExp('^' + newVal);
+            } else {
+                r = new RegExp(newVal);
+            }
             $('tr').each(function () {
                 var td = this.children[offset];
                 if (td.tagName == 'TD') {
