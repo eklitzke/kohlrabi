@@ -4,6 +4,7 @@
 html { font-family: 'Droid Sans', sans-serif; }
 body { margin: 1em; }
 th { padding-right: 1em; font-weight: bold; min-width: 6em; text-align: left; }
+th:hover { cursor: pointer; }
 td { padding-right: 1em; text-align: left; max-width: 60em; word-wrap: break-word; }
 
 .hoverable:hover { background: #c6daf4; }
