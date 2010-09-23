@@ -1,11 +1,14 @@
 from __future__ import with_statement
 
 import os
-import daemon
-import lockfile
-import logging
 import optparse
 import yaml
+import logging
+try:
+    import daemon
+    import lockfile
+except ImportError:
+    daemon, lockfile = None, None
 
 import tornado.httpserver
 import tornado.ioloop
@@ -16,7 +19,8 @@ import kohlrabi.handlers
 if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option('-c', '--config', default='./config.yaml', help='The config file to use')
-    parser.add_option('-d', '--daemon', default=False, action='store_true', help='run as a daemon')
+    if daemon:
+        parser.add_option('-d', '--daemon', default=False, action='store_true', help='run as a daemon')
     parser.add_option('-m', '--module', default=None, help='which database module to load')
     parser.add_option('-p', '--port', type='int', default=8888, help='What port to listen on')
     opts, args = parser.parse_args()
@@ -54,7 +58,7 @@ if __name__ == '__main__':
         http_server.listen(opts.port)
         tornado.ioloop.IOLoop.instance().start()
 
-    if opts.daemon:
+    if daemon and opts.daemon:
         tmpdir = os.environ.get('TMPDIR', '/tmp')
         pidfile = lockfile.FileLock(os.path.join(tmpdir, 'kohlrabi.pid'))
         with daemon.DaemonContext(pidfile=pidfile):
