@@ -41,15 +41,12 @@ if __name__ == '__main__':
     base_path = os.path.abspath(base_path)
     def run_application():
         debug = config.get('debug', False)
-        path_prefix = config.get('path_prefix', None)
-        if path_prefix:
-            path_prefix = '/' + path_prefix.strip('/') + '/'
 
         application = kohlrabi.handlers.application(
             static_path=os.path.join(base_path, 'static'),
             template_path=os.path.join(base_path, 'templates'),
             debug=debug,
-            path_prefix=path_prefix
+            config=config
             )
 
         kohlrabi.db.bind(config.get('database', 'sqlite:///:memory:'), module, create_tables=debug)

@@ -9,6 +9,7 @@ except ImportError:
 import tornado.web
 from kohlrabi import db
 
+config = None
 handlers = []
 
 class RequestMeta(type(tornado.web.RequestHandler)):
@@ -25,7 +26,8 @@ class RequestHandler(tornado.web.RequestHandler):
         super(RequestHandler, self).initialize()
         self.env = {
             'title': '(kohlrabi)',
-            'uri': self.uri
+            'uri': self.uri,
+            'use_ssl': config.get('ssl', False)
         }
 
     def parse_date(self, date_string):
@@ -35,8 +37,8 @@ class RequestHandler(tornado.web.RequestHandler):
             return datetime.date.today()
 
     def uri(self, path):
-        if self.application.path_prefix:
-            return os.path.join(self.application.path_prefix, path.lstrip('/'))
+        if config['path_prefix']:
+            return os.path.join(config['path_prefix'], path.lstrip('/'))
         else:
             return path
 
@@ -92,10 +94,15 @@ class Report(RequestHandler):
 
 def application(**settings):
     """Create a tornado.web.Application object for kohlrabi"""
-    path_prefix = settings.pop('path_prefix')
+    global config
+    config = settings.pop('config')
+    path_prefix = config.get('path_prefix', None)
+    if path_prefix:
+        path_prefix = '/' + path_prefix.strip('/') + '/'
+    config['path_prefix'] = path_prefix
+
     settings['static_url_prefix'] = os.path.join(path_prefix, 'static/') if path_prefix else '/static'
     norm_path = lambda x: os.path.join(path_prefix, x.lstrip('/')) if x else x
     uri_map = [(norm_path(handler.path), handler) for handler in handlers if hasattr(handler, 'path')]
     app = tornado.web.Application(uri_map, **settings)
-    app.path_prefix = path_prefix
     return app
