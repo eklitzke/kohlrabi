@@ -9,12 +9,12 @@
   {% for date, tables in reports %}
   <tr>
 	<td class="bold">{{ date }}</td>
-	<td><a href="/report/{{tables[0]['table_name']}}/{{date}}">{{ tables[0]['name'] }}</a></td>
+	<td><a href="{{uri('/report/' + tables[0]['table_name'] + '/' + date)}}">{{ tables[0]['name'] }}</a></td>
   </tr>
   {% for table in tables[1:] %}
   <tr>
 	<td></td>
-	<td><a href="/report/{{table['table_name']}}/{{date}}">{{ table['name'] }}</a></td>
+	<td><a href="{{uri('/report/' + table['table_name'] + '/' + date)}}">{{ table['name'] }}</a></td>
   </tr>
   {% end %}
   {% end %}

@@ -1,3 +1,4 @@
+import os
 from collections import defaultdict
 import datetime
 try:
@@ -15,7 +16,7 @@ class RequestMeta(type(tornado.web.RequestHandler)):
     def __init__(cls, name, bases, cls_dict):
         super(RequestMeta, cls).__init__(name, bases, cls_dict)
         handlers.append(cls)
-    
+
 class RequestHandler(tornado.web.RequestHandler):
 
     __metaclass__ = RequestMeta
@@ -23,15 +24,22 @@ class RequestHandler(tornado.web.RequestHandler):
     def initialize(self):
         super(RequestHandler, self).initialize()
         self.env = {
-            'title': '(kohlrabi)'
+            'title': '(kohlrabi)',
+            'uri': self.uri
         }
-    
+
     def parse_date(self, date_string):
         if date_string:
             return datetime.datetime.strptime(date_string, '%Y-%m-%d').date()
         else:
             return datetime.date.today()
-    
+
+    def uri(self, path):
+        if self.application.path_prefix:
+            return os.path.join(self.application.path_prefix, path.lstrip('/'))
+        else:
+            return path
+
     def render(self, template, **kw):
         self.env.update(kw)
         super(RequestHandler, self).render(template, **self.env)
@@ -51,7 +59,7 @@ class Home(RequestHandler):
             date = k.strftime('%Y-%m-%d')
             tables = sorted(date_map[k], key=lambda x: x.display_name)
             self.env['reports'].append((date, [{'name': table.display_name, 'table_name': table.__name__} for table in tables]))
-        
+
         self.env['title'] = 'kohlrabi: home'
         self.render('home.html')
 
@@ -74,7 +82,8 @@ class Report(RequestHandler):
 
     def get(self):
         path = self.request.uri.strip('/')
-        _, tbl, date = path.split('/')
+        components = path.split('/')
+        tbl, date = components[-2:]
         date = self.parse_date(date)
         self.env['data'] = getattr(db, tbl).report_data(date)
         self.env['columns'] = getattr(db, tbl).html_table
@@ -83,5 +92,10 @@ class Report(RequestHandler):
 
 def application(**settings):
     """Create a tornado.web.Application object for kohlrabi"""
-    uri_map = [(handler.path, handler) for handler in handlers if hasattr(handler, 'path')]
-    return tornado.web.Application(uri_map, **settings)
+    path_prefix = settings.pop('path_prefix')
+    settings['static_url_prefix'] = os.path.join(path_prefix, 'static/') if path_prefix else '/static'
+    norm_path = lambda x: os.path.join(path_prefix, x.lstrip('/')) if x else x
+    uri_map = [(norm_path(handler.path), handler) for handler in handlers if hasattr(handler, 'path')]
+    app = tornado.web.Application(uri_map, **settings)
+    app.path_prefix = path_prefix
+    return app
