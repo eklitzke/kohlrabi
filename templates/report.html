@@ -5,11 +5,7 @@
 {% end %}
 
 {% block js %}
-{% if use_ssl %}
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-{% else %}
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
-{% end %}
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
 <script type="text/javascript" src="{{static_url('js/report.js')}}"></script>
 {% end %}
 
