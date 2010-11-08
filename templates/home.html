@@ -21,9 +21,10 @@
 </table>
 {% if num_pages > 1 %}
 <div class="pagination">
+  Pages:
   {% for x in xrange(1, num_pages + 1) %}
   {% if x == page %}
-  {{ x }}
+  <span class="bold">{{ x }}</span>
   {% else %}
   <a href="{{uri('/%d' % (x,))}}">{{x}}</a>
   {% end %}
