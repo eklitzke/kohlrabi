@@ -19,4 +19,15 @@
   {% end %}
   {% end %}
 </table>
+{% if num_pages > 1 %}
+<div class="pagination">
+  {% for x in xrange(1, num_pages + 1) %}
+  {% if x == page %}
+  {{ x }}
+  {% else %}
+  <a href="{{uri('/%d' % (x,))}}">{{x}}</a>
+  {% end %}
+  {% end %}
+</div>
+{% end %}
 {% end %}
