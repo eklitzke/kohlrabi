@@ -1,5 +1,54 @@
 /* -*- indent-tabs-mode: nil; tab-width: 4; -*- */
 
+var currentQuery = '';
+var currentSort = '';
+
+function updateHash () {
+    var i;
+    var parts = [];
+    if (currentQuery) {
+        parts.push('q=' + escape(currentQuery));
+    }
+    if (currentSort) {
+        parts.push('s=' + escape(currentSort));
+    }
+    if (parts.length) {
+        location.hash = parts.join('&')
+    } else {
+        location.hash = '';
+    }
+}
+
+function info (msg) {
+    if (typeof console === 'object' && typeof console.info === 'function') {
+        console.info(msg);
+    }
+}
+
+/* Read the currentQuery and currentSort out of location.hash */
+$(document).ready(function () {
+    var hash = (location.hash || '').replace(/^(#*)(.*)/, '$2');
+    if (hash) {
+        var i;
+        var parts = hash.split('&');
+        for (i = 0; i < parts.length; i++) {
+            if (/[a-z]=.+/.test(parts[i])) {
+                var k = parts[i][0];
+                var v = unescape(parts[i].slice(2)) || '';
+                if (k === 'q') {
+                    currentQuery = v;
+                } else if (k === 's') {
+                    currentSort = v;
+                }
+            }
+        }
+    }
+
+    var servlet_filter = $('#servlet_filter');
+    servlet_filter.val(currentQuery);
+    establishInputFilter(servlet_filter, 0);
+});
+
 $(document).ready(function () {
     var tbl = document.getElementById('kohlrabi_table');
     var thRow = tbl.getElementsByTagName('tr')[0];
@@ -76,11 +125,12 @@ $(document).ready(function () {
 });
 
 function establishInputFilter(input, offset, implicitCaret) {
-    var lastVal = input.val();
-    var filter = function () {
-        var newVal = $(this).val();
-        if (newVal !== lastVal) {
-            lastVal = newVal;
+    var filter = function (force) {
+        var newVal = input.val();
+        if (force || newVal !== currentQuery) {
+            currentQuery = newVal;
+            updateHash();
+
             var r;
             if (implicitCaret) {
                 r = new RegExp('^' + newVal);
@@ -101,4 +151,8 @@ function establishInputFilter(input, offset, implicitCaret) {
     };
     input.change(filter);
     input.keyup(filter);
+
+    if (input.val()) {
+        filter(true);
+    }
 }
