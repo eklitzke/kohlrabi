@@ -32,7 +32,7 @@ class RequestHandler(tornado.web.RequestHandler):
         }
 
     def parse_date(self, date_string):
-        if date_string:
+        if date_string and date_string != 'current':
             return datetime.datetime.strptime(date_string, '%Y-%m-%d').date()
         else:
             return datetime.date.today()
@@ -95,10 +95,14 @@ class Report(RequestHandler):
     path = '/report/.*/.*'
 
     def get(self):
-        path = self.request.uri.strip('/')
+        path = self.request.uri.lstrip('/')
         components = path.split('/')
         tbl, date = components[-2:]
-        date = self.parse_date(date)
+        if not date or date == 'current':
+            date = getattr(db, tbl).current_date()
+        else:
+            date = self.parse_date(date)
+        self.env['date'] = date
         self.env['data'] = getattr(db, tbl).report_data(date)
         self.env['columns'] = getattr(db, tbl).html_table
         self.env['title'] = getattr(db, tbl).display_name + ' ' + date.strftime('%Y-%m-%d')

@@ -23,7 +23,17 @@ def bind(engine_path, import_module, create_tables=False):
     if create_tables:
         metadata.create_all(engine)
 
-Base = declarative_base(metadata=metadata)
+class _Base(object):
+
+    @classmethod
+    def current_date(cls):
+        row = session.query(cls).order_by(cls.date.desc()).first()
+        if row:
+            return row.date
+        else:
+            return None
+
+Base = declarative_base(metadata=metadata, cls=_Base)
 
 class ReportMeta(DeclarativeMeta):
 

@@ -21,3 +21,5 @@ label { font-weight: bold; }
 
 a { color: #222; text-decoration: none; }
 a:hover { color: black; }
+
+.report-label { font-weight: bold; font-size: 131%; margin-bottom: 0.5em; }
