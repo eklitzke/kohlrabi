@@ -71,9 +71,18 @@ class ReportMeta(DeclarativeMeta):
             if hasattr(cls, 'column_map'):
                 datum = dict((cls.column_map[k], v) for k, v in datum.iteritems())
             datum['date'] = date
+
+            # SQLAlchemy will throw an exception if we give it any extra
+            # columns, so make sure the dataset it pruned to columns that
+            # actually exist
+            for k in datum.keys():
+                # XXX: this is a really crude heuristic
+                if not hasattr(cls, k):
+                    del datum[k]
+
             session.add(cls(**datum))
         session.commit()
-    
+
     def dates(cls):
         return (row.date for row in session.query(cls).group_by(cls.date))
 
