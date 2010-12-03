@@ -44,6 +44,11 @@ $(document).ready(function () {
         currentSort = $(this).html().toLowerCase();
         updateHash();
 
+        // add a fake position attribute, for sorting
+        for (var i = 0; i < tdRows.length; i++) {
+            tdRows[i].position = i;
+        }
+
         var th = null;
         var sort;
         for (var i = 0; i < thRow.children.length; i++) {
@@ -62,15 +67,21 @@ $(document).ready(function () {
                 tdRows.sort(function (a, b) {
                     var aVal = parseFloat(a.children[i].innerHTML);
                     var bVal = parseFloat(b.children[i].innerHTML);
-                    return aVal - bVal;
+                    if (aVal === bVal) {
+                        return a.position - b.position; // ensure a stable sort
+                    } else {
+                        return aVal - bVal;
+                    }
                 });
             } else {
                 tdRows.sort(function (a, b) {
                     var aVal = a.children[i].innerHTML;
                     var bVal = b.children[i].innerHTML;
-                    if (aVal == bVal)
-                        return 0;
-                    return aVal > bVal ? 1 : -1;
+                    if (aVal === bVal) {
+                        return a.position - b.position; // ensure a stable sort
+                    } else {
+                        return aVal > bVal ? 1 : -1;
+                    }
                 });
             }
             if (th.sortType === 'desc') {
