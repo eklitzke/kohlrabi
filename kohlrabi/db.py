@@ -83,8 +83,12 @@ class ReportMeta(DeclarativeMeta):
             session.add(cls(**datum))
         session.commit()
 
-    def dates(cls):
-        return (row.date for row in session.query(cls).group_by(cls.date))
+    def dates(cls, limit=None):
+        ds = session.query(cls.date).group_by(cls.date).order_by(cls.date.desc())
+        if limit is not None:
+            return (row.date for row in ds[:limit])
+        else:
+            return (row.date for row in ds)
 
 class ReportColumn(object):
 

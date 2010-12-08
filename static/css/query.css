@@ -1,0 +1,10 @@
+#query_input { font-family: monospace; }
+#query_results { font-family: monospace; }
+
+#schema { margin-left: 2em; margin-top: 0;}
+.bold { font-family: monospace; font-weight: bold; font-size: 120%; }
+.bold:hover { color: #13218c; cursor: pointer; }
+
+tr:nth-child(2n) { background-color: #d4daf4; }
+
+#query_log_list > li { font-family: monospace; }

@@ -1,12 +1,14 @@
 html { font-family: 'Droid Sans', sans-serif; }
-body { margin: 1em; max-width: 600px; }
+body { margin: 1em; max-width: 960px; }
 /* .title { font-size: 60px; position: absolute; bottom: 20px; right: 2em; color: #444; } */
 .title { font-size: 60px; position: absolute; bottom: 20px; right: 2em; color: #444; }
 .title_image { margin-left: 1em; }
 .rel { position: relative; }
 
+.alt_title { font-size: 60px; right: 2em; color: #444; }
+
 .reports { margin: 1em; }
-.reports > a { color: #444; text-decoration: none; }
+.reports > a { color: #555; text-decoration: none; }
 .reports > a:hover { color: black; text-decoration: none; }
 
 .bold { font-weight: bold; }
@@ -14,3 +16,8 @@ td { padding-right: 0.5em; }
 
 a { color: #222; text-decoration: none; }
 a:hover { color: black; }
+
+h1 { font-weight: bold; font-size: 130%; }
+h2 { font-weight: bold; font-size: 120%; }
+h3 { font-weight: bold; font-size: 120%; }
+button { font-family: inherit; font-size: inherit; }

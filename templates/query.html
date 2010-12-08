@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="{{static_url('css/main.css')}}">
+<link rel="stylesheet" type="text/css" href="{{static_url('css/query.css')}}">
+{% end %}
+
+{% block js %}
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/javascript" src="{{static_url('js/query.js')}}"></script>
+{% end %}
+
+{% block body %}
+<div>
+  <a class="alt_title" href="{{uri('/')}}">Kohlrabi</a>
+</div>
+
+<div style="float: left">
+  {% for table_name, sql in schemata %}
+  <div class="bold">{{ escape(table_name) }}</div>
+  {% end %}
+</div>
+<pre id="schema" style="float: left">
+    {{ escape(initial_sql) }}
+</pre>
+<br style="clear: both">
+
+<div id="query_log_container"
+     {% if not previous_queries %}
+     style="display: none"
+     {% end %}
+     >
+  <h3>Query Log</h3>
+  <ul id="query_log_list">
+    {% for q in previous_queries %}
+    <li>{{ escape(q) }}</li>
+    {% end %}
+  </ul>
+</div>
+
+<h2>Enter A Query</h2>
+
+You enter the following query at your own risk. No attempt is made to validate
+or sanity check the input. Be careful!
+
+<textarea id="query_input" cols=100 rows=5></textarea>
+<br>
+<button id="query_button">Execute Query</button>
+
+<div id="query_results"></div>
+{% end %}

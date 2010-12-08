@@ -2,12 +2,14 @@ import os
 import math
 from collections import defaultdict
 import datetime
+import sqlalchemy.exceptions
 try:
     import simplejson as json
 except ImportError:
     import json
 
 import tornado.web
+from tornado.escape import url_escape, url_unescape, xhtml_escape
 from kohlrabi import db
 
 config = None
@@ -46,6 +48,10 @@ class RequestHandler(tornado.web.RequestHandler):
     def render(self, template, **kw):
         self.env.update(kw)
         super(RequestHandler, self).render(template, **self.env)
+
+    def render_json(self, obj):
+        self.set_header('Content-Type', 'application/json')
+        self.write(json.dumps(obj))
 
 class Home(RequestHandler):
 
@@ -107,6 +113,58 @@ class Report(RequestHandler):
         self.env['columns'] = getattr(db, tbl).html_table
         self.env['title'] = getattr(db, tbl).display_name + ' ' + date.strftime('%Y-%m-%d')
         self.render('report.html')
+
+def get_previous_queries(self):
+    previous_queries = self.get_cookie('queries', None)
+    if previous_queries:
+        try:
+            previous_queries = json.loads(url_unescape(previous_queries))
+        except Exception, e:
+            previous_queries = []
+    else:
+        previous_queries = []
+    return previous_queries
+
+class Query(RequestHandler):
+
+    path = '/query'
+
+    def get(self):
+        self.env['previous_queries'] = get_previous_queries(self)
+        self.env['initial_sql'] = ''
+        self.env['schemata'] = list(db.session.execute("SELECT name, sql FROM sqlite_master WHERE type = 'table'"))
+        if self.env['schemata']:
+            self.env['initial_sql'] = self.env['schemata'][0][1]
+        self.render('query.html')
+
+class ShowSchema(RequestHandler):
+
+    path = '/query/schema/[-a-zA-Z0-9_]+'
+
+    def get(self):
+        table_name = self.request.uri.split('/')[-1]
+        sql, = db.session.connection().execute(
+            sqlalchemy.text("SELECT sql FROM sqlite_master WHERE type = 'table' AND name = :name"), name=table_name).first()
+        self.render_json({'sql': sql.strip()})
+
+class RunQuery(RequestHandler):
+    path = '/query/run'
+
+    def post(self):
+        previous_queries = get_previous_queries(self)
+
+        query = self.get_argument('query');
+        query.rstrip(';')
+        previous_queries = ([query] + previous_queries)[:5]
+        try:
+            rows = [list(row) for row in db.session.execute(query)]
+        except sqlalchemy.exceptions.OperationalError, e:
+            self.render_json({'error': xhtml_escape(str(e))})
+            return
+        else:
+            self.set_cookie('queries', url_escape(json.dumps(previous_queries)))
+            safe_queries = [xhtml_escape(q) for q in previous_queries]
+            self.render_json({'results': rows, 'previous_queries': safe_queries})
 
 def application(**settings):
     """Create a tornado.web.Application object for kohlrabi"""
