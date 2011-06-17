@@ -2,7 +2,10 @@ import os
 import math
 from collections import defaultdict
 import datetime
-import sqlalchemy.exceptions
+try:
+    from sqlalchemy.exception import OperationalError
+except ImportError:
+    from sqlalchemy.exc import OperationalError
 try:
     import simplejson as json
 except ImportError:
@@ -158,7 +161,7 @@ class RunQuery(RequestHandler):
         previous_queries = ([query] + previous_queries)[:5]
         try:
             rows = [list(row) for row in db.session.execute(query)]
-        except sqlalchemy.exceptions.OperationalError, e:
+        except OperationalError, e:
             self.render_json({'error': xhtml_escape(str(e))})
             return
         else:
