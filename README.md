@@ -48,7 +48,7 @@ following code in it:
         display_name = 'Daily Signups'
         html_table = [
             ReportColumn('Referrer', 'referrer'),
-            ReportColumn('Click-Throughs', 'click_throughs'),
+            ReportColumn('Click-Throughs', 'clickthroughs'),
             ReportColumn('Signups', 'signups'),
             ]
     
