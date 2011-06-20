@@ -4,6 +4,7 @@ import os
 import optparse
 import yaml
 import logging
+import sys
 try:
     import daemon
     import lockfile
@@ -16,9 +17,12 @@ import tornado.ioloop
 import kohlrabi.db
 import kohlrabi.handlers
 
+log = logging.getLogger('kohlrabi')
+
 if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option('-c', '--config', default='./config.yaml', help='The config file to use')
+    parser.add_option('--debug', default=False, action='store_true', help='Run in debug mode')
     if daemon:
         parser.add_option('-d', '--daemon', default=False, action='store_true', help='run as a daemon')
     parser.add_option('-m', '--module', default=None, help='which database module to load')
@@ -29,19 +33,23 @@ if __name__ == '__main__':
         with open(opts.config, 'r') as config_file:
             config = yaml.load(config_file)
     except IOError:
-        parser.error('Failed to load config file %r' % (opts.config,))
-    
+        print >> sys.stderr, 'Failed to load config file %r' % (opts.config,)
+        config = {}
+
+    if opts.debug:
+        debug = opts.debug
+    else:
+        debug = config.get('debug', False)
+
     module = opts.module or config.get('module')
     if not module:
-        parser.error('Must specify a database module')
+        parser.error('Must specify a database module (e.g. -m kohlrabi.modules.example)')
 
     base_path = os.path.dirname(__file__)
     if not base_path:
         base_path = os.getcwd()
     base_path = os.path.abspath(base_path)
     def run_application():
-        debug = config.get('debug', False)
-
         application = kohlrabi.handlers.application(
             static_path=os.path.join(base_path, 'static'),
             template_path=os.path.join(base_path, 'templates'),
@@ -49,7 +57,9 @@ if __name__ == '__main__':
             config=config
             )
 
-        kohlrabi.db.bind(config.get('database', 'sqlite:///:memory:'), module, create_tables=debug)
+        db_path = config.get('database', 'sqlite:///:memory:')
+        log.debug('running application on port %d, with database %r' % (opts.port, db_path))
+        kohlrabi.db.bind(db_path, module, create_tables=debug)
 
         http_server = tornado.httpserver.HTTPServer(application)
         http_server.listen(opts.port)
@@ -62,4 +72,7 @@ if __name__ == '__main__':
             logging.basicConfig(filename=os.path.join(tmpdir, 'kohlrabi.log'))
             run_application()
     else:
+        stream_handler = logging.StreamHandler()
+        stream_handler.setLevel(logging.DEBUG if debug else logging.INFO)
+        log.addHandler(stream_handler)
         run_application()

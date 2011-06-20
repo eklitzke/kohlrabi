@@ -173,9 +173,11 @@ def application(**settings):
     """Create a tornado.web.Application object for kohlrabi"""
     global config
     config = settings.pop('config')
-    path_prefix = config.get('path_prefix', None)
+    path_prefix = config.get('path_prefix', '')
     if path_prefix:
         path_prefix = '/' + path_prefix.strip('/') + '/'
+    else:
+        path_prefix = '/'
     config['path_prefix'] = path_prefix
 
     settings['static_url_prefix'] = os.path.join(path_prefix, 'static/') if path_prefix else '/static'
