@@ -10,7 +10,10 @@ session = None
 
 def bind(engine_path, import_module, create_tables=False):
     global session
-    engine = create_engine(engine_path)
+    create_kw = {}
+    if engine_path.startswith('mysql+mysqldb'):
+        create_kw['pool_recycle'] = 3600
+    engine = create_engine(engine_path, **create_kw)
     Session = sessionmaker(bind=engine)
     session = Session()
 
