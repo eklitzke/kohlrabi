@@ -19,6 +19,19 @@ import kohlrabi.handlers
 
 log = logging.getLogger('kohlrabi')
 
+def get_application(base_path, config, debug):
+    """Get a runnable instance of torando.web.Application"""
+    application = kohlrabi.handlers.application(
+        static_path=os.path.join(base_path, 'static'),
+        template_path=os.path.join(base_path, 'templates'),
+        debug=debug,
+        config=config
+        )
+
+    db_path = config.get('database', 'sqlite:///:memory:')
+    kohlrabi.db.bind(db_path, module, create_tables=debug)
+    return application
+
 if __name__ == '__main__':
     parser = optparse.OptionParser()
     parser.add_option('-c', '--config', default='./config.yaml', help='The config file to use')
@@ -49,19 +62,13 @@ if __name__ == '__main__':
     if not base_path:
         base_path = os.getcwd()
     base_path = os.path.abspath(base_path)
+
+    # TODO: this whole daemon thing is kind of ghetto... it might be better to
+    # just require zygote to run the application in daemon mode
+
     def run_application():
-        application = kohlrabi.handlers.application(
-            static_path=os.path.join(base_path, 'static'),
-            template_path=os.path.join(base_path, 'templates'),
-            debug=debug,
-            config=config
-            )
-
-        db_path = config.get('database', 'sqlite:///:memory:')
-        log.debug('running application on port %d, with database %r' % (opts.port, db_path))
-        kohlrabi.db.bind(db_path, module, create_tables=debug)
-
-        http_server = tornado.httpserver.HTTPServer(application)
+        app = get_application(base_path, config, debug)
+        http_server = tornado.httpserver.HTTPServer(app)
         http_server.listen(opts.port)
         tornado.ioloop.IOLoop.instance().start()
 

@@ -2,6 +2,7 @@ import os
 import math
 from collections import defaultdict
 import datetime
+import sqlalchemy
 try:
     from sqlalchemy.exception import OperationalError
 except ImportError:
@@ -33,7 +34,6 @@ class RequestHandler(tornado.web.RequestHandler):
         self.env = {
             'title': '(kohlrabi)',
             'uri': self.uri,
-            'use_ssl': config.get('ssl', False)
         }
 
     def parse_date(self, date_string):
@@ -122,7 +122,7 @@ def get_previous_queries(self):
     if previous_queries:
         try:
             previous_queries = json.loads(url_unescape(previous_queries))
-        except Exception, e:
+        except Exception:
             previous_queries = []
     else:
         previous_queries = []
