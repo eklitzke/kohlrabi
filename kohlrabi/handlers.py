@@ -77,11 +77,25 @@ class Home(RequestHandler):
         self.env['page'] = page
         dates = dates[self.DATES_PER_PAGE * (page - 1) : self.DATES_PER_PAGE * page]
 
+        self.env['dates'] = dates
+        report_names = set()
+        for d in dates:
+            report_names |= set((r.display_name, r.__name__) for r in date_map[d])
+
+        self.env['report_names'] = list(sorted(report_names))
         self.env['reports'] = []
-        for k in dates:
-            date = k.strftime('%Y-%m-%d')
-            tables = sorted(date_map[k], key=lambda x: x.display_name)
-            self.env['reports'].append((date, [{'name': table.display_name, 'table_name': table.__name__} for table in tables]))
+
+        # this is *also* really inefficient and ghetto
+        for d in dates:
+            links = []
+            for report_name, report_table in self.env['report_names']:
+                for t in date_map[d]:
+                    if t.display_name == report_name:
+                        links.append((report_name, report_table))
+                        break
+                else:
+                    links.append(None)
+            self.env['reports'].append((d.strftime('%Y-%m-%d'), links))
 
         self.env['title'] = 'kohlrabi: home'
         self.render('home.html')

@@ -8,20 +8,42 @@
 <!--
 <a class="reports bold" href="{{uri('/query')}}">Ad-Hoc Query Tool</a>
 -->
+
+{% if False %}
 <table class="reports">
+
+  <tr class="underline">
+    <th></th>
+    {% for display_name, _ in report_names %}
+    <th>{{ escape(display_name) }}</th>
+    {% end %}
+  </tr>
   {% for date, tables in reports %}
   <tr>
 	<td class="bold">{{ date }}</td>
-	<td><a href="{{uri('/report/' + tables[0]['table_name'] + '/' + date)}}">{{ tables[0]['name'] }}</a></td>
+    {% for tbl in tables %}
+    <td class="{% if tbl %}has_data{% else %}no_data{% end %}"></td>
+    {% end %}
   </tr>
-  {% for table in tables[1:] %}
-  <tr>
-	<td></td>
-	<td><a href="{{uri('/report/' + table['table_name'] + '/' + date)}}">{{ table['name'] }}</a></td>
-  </tr>
-  {% end %}
   {% end %}
 </table>
+{% else %}
+<ul class="reports">
+  {% for date, tables in reports %}
+  <li>
+    <span class="date">{{ date }}</span>
+    <ul class="report_items">
+      {% for tbl in tables %}
+      {% if tbl %}
+      <li> <a href="{{uri('/report/' + tbl[1] + '/' + date)}}">{{ escape(tbl[0])}}</a></li>
+      {% end %}
+      {% end %}
+    </ul>
+  </li>
+  {% end %}
+</ul>
+{% end %}
+
 {% if num_pages > 1 %}
 <div class="pagination">
   Pages:

@@ -53,6 +53,7 @@ if __name__ == '__main__':
         debug = opts.debug
     else:
         debug = config.get('debug', False)
+    log.setLevel(logging.DEBUG if debug else logging.INFO)
 
     module = opts.module or config.get('module')
     if not module:
@@ -79,7 +80,8 @@ if __name__ == '__main__':
             logging.basicConfig(filename=os.path.join(tmpdir, 'kohlrabi.log'))
             run_application()
     else:
-        stream_handler = logging.StreamHandler()
-        stream_handler.setLevel(logging.DEBUG if debug else logging.INFO)
-        log.addHandler(stream_handler)
+        if os.isatty(sys.stderr.fileno()):
+            stream_handler = logging.StreamHandler(stream=sys.stderr)
+            stream_handler.setLevel(logging.DEBUG if debug else logging.INFO)
+            log.addHandler(stream_handler)
         run_application()

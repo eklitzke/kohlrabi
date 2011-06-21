@@ -10,6 +10,17 @@ body { margin: 1em; max-width: 960px; }
 .reports { margin: 1em; }
 .reports > a { color: #555; text-decoration: none; }
 .reports > a:hover { color: black; text-decoration: none; }
+.reports th { font-weight: bold; padding-right: 1em; }
+.reports td { margin-right: 1em; }
+
+ul.reports .date { font-weight: bold; float: left; width: 6em; }
+ul.reports > li { margin-bottom: 0.5em; clear: both; }
+
+ul.reports ul.report_items { float:left }
+
+.has_data { background-color: #BBB; border: 1px solid #444; }
+.has_data:hover { background-color: #444; cursor: pointer; }
+tr.underline { border-bottom: 1px solid black; }
 
 .bold { font-weight: bold; }
 td { padding-right: 0.5em; }
@@ -21,3 +32,5 @@ h1 { font-weight: bold; font-size: 130%; }
 h2 { font-weight: bold; font-size: 120%; }
 h3 { font-weight: bold; font-size: 120%; }
 button { font-family: inherit; font-size: inherit; }
+
+.pagination { clear: both; }
