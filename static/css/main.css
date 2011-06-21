@@ -34,3 +34,17 @@ h3 { font-weight: bold; font-size: 120%; }
 button { font-family: inherit; font-size: inherit; }
 
 .pagination { clear: both; }
+
+/* courtesy jon madden */
+.reports > li:nth-child(odd) {
+    background: #e5e5e5;
+}
+
+.reports > li {
+    overflow: hidden;
+    margin-bottom: 1em;
+}
+
+.reports .date {
+    margin-right: 1em;
+}
