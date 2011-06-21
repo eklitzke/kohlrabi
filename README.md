@@ -115,7 +115,7 @@ Configuration
 This section describes the parameters that can be placed in the config file. The
 config file should be in YAML format. You can specify the path to the
 configuration file by invoking `main.py` with the `-c` option, e.g.
-`python main.py -c /tmp/kohlrabi.yaml`.
+`python main.py -c /etc/kohlrabi.yaml`.
 
 * `database` -- this is a string with the SQLAlchemy-style path to the
   database. An example would be `sqlite:///foo.sqlite` for a `foo.sqlite` file
