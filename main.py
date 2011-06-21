@@ -81,7 +81,7 @@ if __name__ == '__main__':
             run_application()
     else:
         if os.isatty(sys.stderr.fileno()):
-            stream_handler = logging.StreamHandler(stream=sys.stderr)
+            stream_handler = logging.StreamHandler()
             stream_handler.setLevel(logging.DEBUG if debug else logging.INFO)
             log.addHandler(stream_handler)
         run_application()
