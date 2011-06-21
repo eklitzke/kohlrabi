@@ -37,7 +37,7 @@ button { font-family: inherit; font-size: inherit; }
 
 /* courtesy jon madden */
 .reports > li:nth-child(odd) {
-    background: #e5e5e5;
+    background: #efefef;
 }
 
 .reports > li {
@@ -47,4 +47,9 @@ button { font-family: inherit; font-size: inherit; }
 
 .reports .date {
     margin-right: 1em;
+}
+
+ul.reports > li {
+    border-radius: 5px;
+    padding: 5px;
 }
