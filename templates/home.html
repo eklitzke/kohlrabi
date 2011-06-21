@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 
+{% block js %}
+<script type="text/javascript" src="{{jquery_url}}"></script>
+<script type="text/javascript" src="{{static_url('js/color.min.js')}}"></script>
+<script type="text/javascript" src="{{static_url('js/home.js')}}"></script>
+{% end %}
+
 {% block body %}
 <div class="rel">
   <img src="{{static_url('images/purple.png')}}" class="title_image" >
@@ -35,7 +41,10 @@
     <ul class="report_items">
       {% for tbl in tables %}
       {% if tbl %}
-      <li> <a href="{{uri('/report/' + tbl[1] + '/' + date)}}">{{ escape(tbl[0])}}</a></li>
+      <li>
+        <canvas class="canvas_{{tbl[1]}}" width="10" height="10"></canvas>
+        <a href="{{uri('/report/' + tbl[1] + '/' + date)}}">{{ escape(tbl[0])}}</a>
+      </li>
       {% end %}
       {% end %}
     </ul>

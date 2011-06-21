@@ -34,6 +34,7 @@ class RequestHandler(tornado.web.RequestHandler):
         self.env = {
             'title': '(kohlrabi)',
             'uri': self.uri,
+            'jquery_url': '//ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js'
         }
 
     def parse_date(self, date_string):
