@@ -184,6 +184,13 @@ class RunQuery(RequestHandler):
             safe_queries = [xhtml_escape(q) for q in previous_queries]
             self.render_json({'results': rows, 'previous_queries': safe_queries})
 
+class Status(RequestHandler):
+
+    path = '/status'
+
+    def get(self):
+        self.render_json({'status': 'ok'})
+
 def application(**settings):
     """Create a tornado.web.Application object for kohlrabi"""
     global config
