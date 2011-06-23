@@ -29,8 +29,7 @@ def get_application(config=None, debug=False, module=None):
 
     if config is None:
         for path in [os.path.join(base_path, 'config.yaml'),
-                     os.path.join(base_path, 'kohlrabi.yaml'),
-                     '/nail/srv/configs/kohlrabi.yaml']:
+                     os.path.join(base_path, 'kohlrabi.yaml')]:
             if os.path.exists(path):
                 with open(path) as cf:
                     config = yaml.load(cf)
@@ -82,7 +81,7 @@ if __name__ == '__main__':
     # just require zygote to run the application in daemon mode
 
     def run_application():
-        app = get_application(base_path, config, debug)
+        app = get_application(config, debug)
         http_server = tornado.httpserver.HTTPServer(app)
         http_server.listen(opts.port)
         tornado.ioloop.IOLoop.instance().start()
@@ -92,10 +91,10 @@ if __name__ == '__main__':
         pidfile = lockfile.FileLock(os.path.join(tmpdir, 'kohlrabi.pid'))
         with daemon.DaemonContext(pidfile=pidfile):
             logging.basicConfig(filename=os.path.join(tmpdir, 'kohlrabi.log'))
-            run_application(config, debug)
+            run_application()
     else:
         if os.isatty(sys.stderr.fileno()):
             stream_handler = logging.StreamHandler()
             stream_handler.setLevel(logging.DEBUG if debug else logging.INFO)
             log.addHandler(stream_handler)
-        run_application(config, debug)
+        run_application()
