@@ -19,8 +19,27 @@ import kohlrabi.handlers
 
 log = logging.getLogger('kohlrabi')
 
-def get_application(base_path, config, debug):
+def get_application(config=None, debug=False, module=None):
     """Get a runnable instance of torando.web.Application"""
+
+    base_path = os.path.join(os.path.dirname(__file__), '..')
+    if not base_path:
+        base_path = os.getcwd()
+    base_path = os.path.abspath(base_path)
+
+    if config is None:
+        for path in [os.path.join(base_path, 'config.yaml'),
+                     os.path.join(base_path, 'kohlrabi.yaml'),
+                     '/nail/srv/configs/kohlrabi.yaml']:
+            if os.path.exists(path):
+                with open(path) as cf:
+                    config = yaml.load(cf)
+                    break
+        else:
+            config = {'debug': debug}
+
+    module = module or config.get('module', 'kohlrabi.modules.example')
+
     application = kohlrabi.handlers.application(
         static_path=os.path.join(base_path, 'static'),
         template_path=os.path.join(base_path, 'templates'),
@@ -47,7 +66,7 @@ if __name__ == '__main__':
             config = yaml.load(config_file)
     except IOError:
         print >> sys.stderr, 'Failed to load config file %r' % (opts.config,)
-        config = {}
+        config = None
 
     if opts.debug:
         debug = opts.debug
@@ -58,11 +77,6 @@ if __name__ == '__main__':
     module = opts.module or config.get('module')
     if not module:
         parser.error('Must specify a database module (e.g. -m kohlrabi.modules.example)')
-
-    base_path = os.path.dirname(__file__)
-    if not base_path:
-        base_path = os.getcwd()
-    base_path = os.path.abspath(base_path)
 
     # TODO: this whole daemon thing is kind of ghetto... it might be better to
     # just require zygote to run the application in daemon mode
@@ -78,10 +92,10 @@ if __name__ == '__main__':
         pidfile = lockfile.FileLock(os.path.join(tmpdir, 'kohlrabi.pid'))
         with daemon.DaemonContext(pidfile=pidfile):
             logging.basicConfig(filename=os.path.join(tmpdir, 'kohlrabi.log'))
-            run_application()
+            run_application(config, debug)
     else:
         if os.isatty(sys.stderr.fileno()):
             stream_handler = logging.StreamHandler()
             stream_handler.setLevel(logging.DEBUG if debug else logging.INFO)
             log.addHandler(stream_handler)
-        run_application()
+        run_application(config, debug)
