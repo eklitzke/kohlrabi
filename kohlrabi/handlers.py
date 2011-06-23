@@ -3,6 +3,7 @@ import math
 from collections import defaultdict
 import datetime
 import sqlalchemy
+import traceback
 try:
     from sqlalchemy.exception import OperationalError
 except ImportError:
@@ -56,6 +57,10 @@ class RequestHandler(tornado.web.RequestHandler):
     def render_json(self, obj):
         self.set_header('Content-Type', 'application/json')
         self.write(json.dumps(obj))
+
+    def get_error_html(self, status_code, **kwargs):
+        self.set_header('Content-Type', 'text/plain')
+        return traceback.format_exc()
 
 class Home(RequestHandler):
 
