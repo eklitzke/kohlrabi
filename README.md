@@ -32,29 +32,31 @@ Adding New Reports
 It's easiest to explain this with an example. Suppose the report module
 specified by the config `module` variable has the following code in it:
 
-    from sqlalchemy import *
-    from kohlrabi.db import *
-    
-    class DailySignups(Base):
-        __tablename__ = 'daily_signups_report'
-        __metaclass__ = ReportMeta
+```python
+from sqlalchemy import *
+from kohlrabi.db import *
 
-        id = Column(Integer, primary_key=True)
-        date = Column(Date, nullable=False)
-        referrer = Column(String, nullable=False)
-        clickthroughs = Column(Integer, nullable=False, default=0)
-        signups = Column(Integer, nullable=False, default=0)
-    
-        display_name = 'Daily Signups'
-        html_table = [
-            ReportColumn('Referrer', 'referrer'),
-            ReportColumn('Click-Throughs', 'clickthroughs'),
-            ReportColumn('Signups', 'signups'),
-            ]
-    
-        @classmethod
-        def report_data(cls, date):
-            return session.query(cls).filter(cls.date == date).order_by(cls.signups.id)
+class DailySignups(Base):
+    __tablename__ = 'daily_signups_report'
+    __metaclass__ = ReportMeta
+
+    id = Column(Integer, primary_key=True)
+    date = Column(Date, nullable=False)
+    referrer = Column(String, nullable=False)
+    clickthroughs = Column(Integer, nullable=False, default=0)
+    signups = Column(Integer, nullable=False, default=0)
+
+    display_name = 'Daily Signups'
+    html_table = [
+        ReportColumn('Referrer', 'referrer'),
+        ReportColumn('Click-Throughs', 'clickthroughs'),
+        ReportColumn('Signups', 'signups'),
+        ]
+
+    @classmethod
+    def report_data(cls, date):
+        return session.query(cls).filter(cls.date == date).order_by(cls.signups.id)
+```
 
 This is a data source that will track users who sign up on your site, based on
 the HTTP `Referrer` header. The table has three columns: `referrer` will track
@@ -68,15 +70,17 @@ have any indexes. In most cases you should probably at least add an index on the
 `date` column, and probably an index on the full set of columns you plan on
 querying from the `report_data` method:
 
-    CREATE TABLE daily_signups_report (
-        id INTEGER NOT NULL,
-        date DATE NOT NULL,
-        referrer VARCHAR NOT NULL,
-        clickthroughs INTEGER NOT NULL,
-        signups INTEGER NOT NULL,
-        PRIMARY KEY (id)
-    );
-    CREATE INDEX daily_signups_date_idx ON daily_signups_report (date, signups);
+```sql
+CREATE TABLE daily_signups_report (
+    id INTEGER NOT NULL,
+    date DATE NOT NULL,
+    referrer VARCHAR NOT NULL,
+    clickthroughs INTEGER NOT NULL,
+    signups INTEGER NOT NULL,
+    PRIMARY KEY (id)
+);
+CREATE INDEX daily_signups_date_idx ON daily_signups_report (date, signups);
+```
 
 OK, that's all the setup you need to do on the Kohlrabi side of things: create a
 Python SQLAlchemy class, and create a table in your SQLite database. The second
@@ -92,18 +96,20 @@ and the following POST parameters:
 For instance, if we were running Kohlrabi on `http://localhost:8888`, then the
 following Python code would generate a sample report for 2001-01-1:
 
-    import json
-    import urllib
-    
-    urllib.urlopen('http://localhost:8888/upload',
-        urllib.urlencode({'date': '2010-01-01',
-                          'data': json.dumps([{'referrer': 'www.yahoo.com',
-                                               'clickthroughs': 100,
-                                               'signups': 7},
-                                              {'referrer': 'www.google.com',
-                                               'clickthroughs': 500,
-                                               'signups': 42}]),
-                          'table': 'DailySignups'}))
+```python
+import json
+import urllib
+
+urllib.urlopen('http://localhost:8888/upload',
+    urllib.urlencode({'date': '2010-01-01',
+                      'data': json.dumps([{'referrer': 'www.yahoo.com',
+                                           'clickthroughs': 100,
+                                           'signups': 7},
+                                          {'referrer': 'www.google.com',
+                                           'clickthroughs': 500,
+                                           'signups': 42}]),
+                      'table': 'DailySignups'}))
+```
 
 Just to reiterate: because the interface to Kohlrabi is a normal HTTP request
 using JSON, you can use any language to send data to Kohlrabi. You can use Java,
