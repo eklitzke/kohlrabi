@@ -135,6 +135,7 @@ class Report(RequestHandler):
         self.env['date'] = date
         self.env['data'] = getattr(db, tbl).report_data(date)
         self.env['columns'] = getattr(db, tbl).html_table
+        self.env['first_column'] = getattr(db, tbl).html_table[0].display
         self.env['title'] = getattr(db, tbl).display_name + ' ' + date.strftime('%Y-%m-%d')
         self.render('report.html')
 
