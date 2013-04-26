@@ -1,6 +1,7 @@
 *.pkl
-*~
 *.py[co]
 *.sqlite
 *.swp
+*~
 config.yaml
+env
