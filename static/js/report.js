@@ -114,10 +114,12 @@ $(document).ready(function () {
         }
         if (clickedRow) {
             $(clickedRow).removeClass('clicked');
+            $(clickedRow.children[0]).addClass('no-overflow');
         }
         if (clickedRow !== this) {
             clickedRow = this;
             $(this).addClass('clicked');
+            $(clickedRow.children[0]).removeClass('no-overflow');
         } else {
             clickedRow = null;
         }

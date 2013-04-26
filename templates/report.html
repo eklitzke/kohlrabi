@@ -14,11 +14,9 @@
 <div class="vgap"><a href="{{uri('/')}}">Back to All Reports</a></div>
 <div class="report-label">{{escape(title)}}</div>
 <label for="servlet_filter">{{first_column}} Filter: </label><input type="text" id="servlet_filter"/>
-<!--
 <span class="input-comment">
-  (e.g. "main:biz_details"; may be slow!)
+  (regex that matches first column; may be slow!)
 </span>
--->
 <table id="kohlrabi_table">
   <tr>
     {% for c in columns %}
@@ -27,8 +25,8 @@
   </tr>
   {% for datum in data %}
   <tr class="hoverable">
-    {% for c in columns %}
-    <td class="{{c.css_class}}" title="{{escape(c.display)}}">{{ c.format(getattr(datum, c.name)) }}</td>
+    {% for i, c in enumerate(columns) %}
+    <td class="{% if i == 0 %}no-overflow {% end %}{{c.css_class}}" title="{{escape(c.display)}}">{{ c.format(getattr(datum, c.name)) }}</td>
     {% end %}
   </tr>
   {% end %}

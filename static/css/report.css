@@ -7,11 +7,12 @@ th { padding-right: 1em; font-weight: bold; min-width: 6em; text-align: left; }
 th:hover { cursor: pointer; }
 td { padding-right: 1em; text-align: left; max-width: 60em; word-wrap: break-word; }
 
-.hoverable:hover { background: #c6daf4; }
+.hoverable:hover { background: #c6daf4; cursor: pointer; }
 
 .align-right { text-align: right; }
 .number { text-align: right; }
 .clicked { background: #d1c5ff !important; }
+.no-overflow { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 td.tiny { font-size: 80%; }
 
 label { font-weight: bold; }
