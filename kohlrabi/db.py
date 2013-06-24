@@ -28,6 +28,8 @@ def bind(engine_path, import_module, create_tables=False):
 
 class _Base(object):
 
+    _abstract = True
+
     @classmethod
     def current_date(cls):
         row = session.query(cls).order_by(cls.date.desc()).first()
@@ -42,7 +44,8 @@ class ReportMeta(DeclarativeMeta):
 
     def __init__(cls, name, bases, cls_dict):
         super(ReportMeta, cls).__init__(name, bases, cls_dict)
-        report_tables.add(cls)
+        if not cls_dict.get('_abstract', False):
+            report_tables.add(cls)
 
         def format_float(v):
             return '%1.2f' % (v or 0)
