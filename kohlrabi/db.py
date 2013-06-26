@@ -28,7 +28,7 @@ def bind(engine_path, import_module, create_tables=False):
 
 class _Base(object):
 
-    _abstract = True
+    __abstract__ = True
 
     @classmethod
     def current_date(cls):
@@ -44,8 +44,10 @@ class ReportMeta(DeclarativeMeta):
 
     def __init__(cls, name, bases, cls_dict):
         super(ReportMeta, cls).__init__(name, bases, cls_dict)
-        if not cls_dict.get('_abstract', False):
-            report_tables.add(cls)
+        if cls_dict.get('__abstract__', False):
+            return
+
+        report_tables.add(cls)
 
         def format_float(v):
             return '%1.2f' % (v or 0)
