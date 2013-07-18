@@ -7,18 +7,17 @@ from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 report_tables = set()
 
 metadata = MetaData()
-session = None
+Session = None
 
 def bind(engine_path, import_module, create_tables=False):
-    global session
+    global Session
     create_kw = {
         'poolclass': NullPool,
     }
     if engine_path.startswith('mysql+mysqldb'):
         create_kw['pool_recycle'] = 3600
     engine = create_engine(engine_path, **create_kw)
-    Session = sessionmaker(bind=engine)
-    session = Session()
+    Session = scoped_session(sessionmaker(bind=engine))
 
     if import_module:
         __import__(import_module)
@@ -35,7 +34,7 @@ class _Base(object):
 
     @classmethod
     def current_date(cls):
-        row = session.query(cls).order_by(cls.date.desc()).first()
+        row = Session.query(cls).order_by(cls.date.desc()).first()
         if row:
             return row.date
         else:
@@ -76,8 +75,8 @@ class ReportMeta(DeclarativeMeta):
 
     def load_report(cls, data, date=None):
         date = date or datetime.date.today()
-        for row in session.query(cls).filter(cls.date == date):
-            session.delete(row)
+        for row in Session.query(cls).filter(cls.date == date):
+            Session.delete(row)
         for datum in data:
             if hasattr(cls, 'column_map'):
                 datum = dict((cls.column_map[k], v) for k, v in datum.iteritems())
@@ -91,11 +90,11 @@ class ReportMeta(DeclarativeMeta):
                 if not hasattr(cls, k):
                     del datum[k]
 
-            session.add(cls(**datum))
-        session.commit()
+            Session.add(cls(**datum))
+        Session.commit()
 
     def dates(cls, limit=None):
-        ds = session.query(cls.date).group_by(cls.date).order_by(cls.date.desc())
+        ds = Session.query(cls.date).group_by(cls.date).order_by(cls.date.desc())
         if limit is not None:
             return (row.date for row in ds[:limit])
         else:

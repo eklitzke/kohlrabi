@@ -38,6 +38,10 @@ class RequestHandler(tornado.web.RequestHandler):
             'jquery_url': '//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js'
         }
 
+    def finish(self, chunk=None):
+        db.Session.remove()
+        super(RequestHandler, self).finish(chunk)
+
     def parse_date(self, date_string):
         if date_string and date_string != 'current':
             return datetime.datetime.strptime(date_string, '%Y-%m-%d').date()
