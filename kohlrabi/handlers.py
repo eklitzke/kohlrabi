@@ -63,7 +63,6 @@ class RequestHandler(tornado.web.RequestHandler):
         self.write(json.dumps(obj))
 
     def get_error_html(self, status_code, **kwargs):
-        db.session.rollback()
         self.set_header('Content-Type', 'text/plain')
         return traceback.format_exc()
 
