@@ -1,6 +1,7 @@
 import datetime
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
 report_tables = set()
@@ -10,7 +11,9 @@ session = None
 
 def bind(engine_path, import_module, create_tables=False):
     global session
-    create_kw = {}
+    create_kw = {
+        'poolclass': NullPool,
+    }
     if engine_path.startswith('mysql+mysqldb'):
         create_kw['pool_recycle'] = 3600
     engine = create_engine(engine_path, **create_kw)
