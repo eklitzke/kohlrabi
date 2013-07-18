@@ -1,6 +1,6 @@
 import datetime
 from sqlalchemy import *
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.pool import NullPool
 from sqlalchemy.ext.declarative import declarative_base, DeclarativeMeta
 
