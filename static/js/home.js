@@ -26,7 +26,6 @@ $(document).ready(function () {
 
     $('.report_link').each(function (index, value) {
         $(this).click(function(event) {
-            console.log('got a click durrr');
             var params = {};
             var variants = this.parentNode.getElementsByClassName('variant');
             var hasAny = false;
@@ -39,9 +38,6 @@ $(document).ready(function () {
                     hasAny = true;
                 }
             }
-            console.log(params);
-            console.log(params.length)
-            event.preventDefault();
             if (hasAny) {
                 event.preventDefault();
                 window.location = this.href + '?' + $.param(params);
