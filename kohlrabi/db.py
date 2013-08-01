@@ -1,4 +1,6 @@
 import datetime
+import time
+
 from sqlalchemy import *
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.pool import NullPool
@@ -32,6 +34,8 @@ class _Base(object):
 
     __abstract__ = True
 
+    _variant_cache = (0, None)
+
     @classmethod
     def current_date(cls):
         row = Session.query(cls).order_by(cls.date.desc()).first()
@@ -39,6 +43,26 @@ class _Base(object):
             return row.date
         else:
             return None
+
+    @classmethod
+    def variant_map(cls):
+        now = time.time()
+        then, vals = getattr(cls, '_variant_cache', (0, []))
+        if now - then <= 60:  # cache for one minute
+            return vals
+
+        variants = []
+        for variant in getattr(cls, 'variants', []):
+            values = []
+            for val in Session.query(getattr(cls, variant)).distinct():
+                val, = val
+                if val:
+                    values.append(val)
+            values.sort()
+            variants.append((variant, values))
+
+        cls._variant_cache = (now, variants)
+        return variants
 
 Base = declarative_base(metadata=metadata, cls=_Base)
 

@@ -4,6 +4,7 @@ from collections import defaultdict
 import datetime
 import sqlalchemy
 import traceback
+import urlparse
 try:
     from sqlalchemy.exception import OperationalError
 except ImportError:
@@ -73,39 +74,29 @@ class Home(RequestHandler):
     DATES_PER_PAGE = 14
 
     def get(self):
-        # this is pretty inefficient
+        # we want to know for each date, which tables are available
         date_map = defaultdict(list)
         for tbl in db.report_tables:
             for d in tbl.dates():
                 date_map[d].append(tbl)
+            date_map[d] = sorted(date_map[d], key=lambda x: x.display_name)
 
+        # these are all the dates available to display reports for
         dates = sorted(date_map.keys(), reverse=True)
         self.env['num_pages'] = int(math.ceil(len(dates) / float(self.DATES_PER_PAGE)))
 
         # show DATES_PER_PAGE things per page
-        page = int(self.request.uri.split('/')[-1] or 1)
+        page = int(self.request.uri.split('/')[-1] or 1)  # FIXME
         self.env['page'] = page
         dates = dates[self.DATES_PER_PAGE * (page - 1) : self.DATES_PER_PAGE * page]
 
         self.env['dates'] = dates
-        report_names = set()
+        reports = set()
         for d in dates:
-            report_names |= set((r.display_name, r.__name__) for r in date_map[d])
+            reports |= set(date_map[d])
 
-        self.env['report_names'] = list(sorted(report_names))
-        self.env['reports'] = []
-
-        # this is *also* really inefficient and ghetto
-        for d in dates:
-            links = []
-            for report_name, report_table in self.env['report_names']:
-                for t in date_map[d]:
-                    if t.display_name == report_name:
-                        links.append((report_name, report_table))
-                        break
-                else:
-                    links.append(None)
-            self.env['reports'].append((d.strftime('%Y-%m-%d'), links))
+        self.env['report_names'] = sorted(report.display_name for report in reports)
+        self.env['date_map'] = date_map
 
         self.env['title'] = 'kohlrabi: home'
         self.render('home.html')
@@ -128,15 +119,20 @@ class Report(RequestHandler):
     path = '/report/.*/.*'
 
     def get(self):
-        path = self.request.uri.lstrip('/')
+        path = self.request.path.lstrip('/')
         components = path.split('/')
         tbl, date = components[-2:]
         if not date or date == 'current':
             date = getattr(db, tbl).current_date()
         else:
             date = self.parse_date(date)
+
         self.env['date'] = date
-        self.env['data'] = getattr(db, tbl).report_data(date)
+        table = getattr(db, tbl)
+        data = table.report_data(date)
+        for k, v in urlparse.parse_qsl(self.request.query):
+            data = data.filter(getattr(table, k) == v)
+        self.env['data'] = data
         self.env['columns'] = getattr(db, tbl).html_table
         self.env['first_column'] = getattr(db, tbl).html_table[0].display
         self.env['title'] = getattr(db, tbl).display_name + ' ' + date.strftime('%Y-%m-%d')

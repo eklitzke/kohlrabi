@@ -35,17 +35,28 @@
 </table>
 {% else %}
 <ul class="reports">
-  {% for date, tables in reports %}
+  {% for date in dates %}
   <li>
     <span class="date">{{ date }}</span>
     <ul class="report_items">
-      {% for tbl in tables %}
-      {% if tbl %}
+      {% for table in date_map[date] %}
       <li>
-        <canvas class="canvas_{{tbl[1]}}" width="10" height="10"></canvas>
-        <a href="{{uri('/report/' + tbl[1] + '/' + date)}}">{{ escape(tbl[0])}}</a>
+        <canvas class="canvas_{{escape(table.__name__)}}" width="10" height="10"></canvas>
+        <a href="{{uri('/report/' + table.__name__ + '/' + date.strftime('%Y-%m-%d'))}}" class="report_link">{{ escape(table.display_name)}}</a>
+        {% for variant_name, values in table.variant_map() %}
+        {% if values %}
+        <span class="variant">
+          <span class="variant_name">{{variant_name}}</span>:
+          <select>
+            <option value=""></option>
+            {% for value in values %}
+            <option value="{{escape(value)}}">{{escape(value)}}</option>
+            {% end %}
+          </select>
+        </span>
+        {% end %}
+        {% end %}
       </li>
-      {% end %}
       {% end %}
     </ul>
   </li>
