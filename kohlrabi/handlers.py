@@ -79,7 +79,9 @@ class Home(RequestHandler):
         for tbl in db.report_tables:
             for d in tbl.dates():
                 date_map[d].append(tbl)
-            date_map[d] = sorted(date_map[d], key=lambda x: x.display_name)
+
+        for k, v in date_map.iteritems():
+            date_map[k] = sorted(v, key=lambda x: x.display_name)
 
         # these are all the dates available to display reports for
         dates = sorted(date_map.keys(), reverse=True)
